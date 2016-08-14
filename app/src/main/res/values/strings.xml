@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Link Intercept</string>
+    <string name="openLink_button">Open Link</string>
+    <string name="clearLink_button">Clear Link</string>
+    <string name="pleaseOpenWithALink">Please open this app by clicking on a link. Supported links: http, https.</string>
+    <string name="mainLabelForValidUrl">Full URL (length: %1$d)</string>
+    <string name="hint">Opened URL appears here.</string>
+    <string name="urlIsEmpty">URL is empty.</string>
+    <string name="urlIsNotValid">URL is not valid.</string>
+    <string name="urlState_textView">URL state: %1$s.</string>
+    <string name="urlState_ok">URL is valid</string>
+    <string name="urlState_invalid">URL is invalid</string>
+    <string name="urlState_uriSchemeMissing">the URI scheme is missing. Please use http:// or https:// at the start of the URL</string>
+    <string name="urlState_emptyString">the URL is empty</string>
+</resources>
