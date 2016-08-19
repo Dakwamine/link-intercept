@@ -2,8 +2,10 @@
 An Android app which can be opened like any browser to show the link's URL and lets you choose if you want to follow it. Also adds itself in the home-button-swipe-up-action list to disable the action (useful for Android &lt; 6).
 
 ## How it works
+![Link interception](https://github.com/Dakwamine/link-intercept/blob/master/linkIntercept.gif)
 This application adds itself in the browsers list when touching a link to a http:// or https:// resource. This is set in the AndroidManifest.xml file, in the intent-filter section of MainActivity.
 
+![Disabling assist feature](https://github.com/Dakwamine/link-intercept/blob/master/assist.gif)
 This application adds itself in the home-button-swipe-up-action list, aka assist functionality. This is set in the AndroidManifest.xml file, in the EmptyActivity section.
 
 ## Additional information
