@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.system.StructPollfd;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
         final TextView urlStateLabel = (TextView) findViewById(R.id.urlState_textView);
         final Button openButton = (Button) findViewById(R.id.open_button);
         final Button clearButton = (Button) findViewById(R.id.clear_button);
+        final TextView urlParametersTextView = (TextView) findViewById(R.id.urlParameters_textView);
 
+        // Enable click on links.
+        urlParametersTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         // This case happens when opening the app from the dashboard for example
         if (intent.getDataString() == null) {
@@ -49,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         // This will configure properly buttons activation states and info
-        CheckURLValidity(intent.getDataString(), urlLengthLabel, urlStateLabel, openButton, clearButton);
+        URLState urlState = CheckURLValidity(intent.getDataString(), urlLengthLabel, urlStateLabel, openButton, clearButton);
+
+        // Update URL parameters
+        UpdateUrlParameters(urlState, intent.getDataString(), urlParametersTextView);
 
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                CheckURLValidity(s.toString(), urlLengthLabel, urlStateLabel, openButton, clearButton);
+                URLState urlState = CheckURLValidity(s.toString(), urlLengthLabel, urlStateLabel, openButton, clearButton);
+                UpdateUrlParameters(urlState, s.toString(), urlParametersTextView);
             }
 
             @Override
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private URLState CheckURLValidity(String _urlToValidate, TextView _urlLengthLabel, TextView _results_textView, Button _openButton, Button _clearButton) {
         _urlLengthLabel.setText(String.format(GetStringFromResources(R.string.mainLabelForValidUrl), _urlToValidate.length()));
 
-        if (_urlToValidate.length() == 0){
+        if (_urlToValidate.length() == 0) {
             // Empty string
             _results_textView.setText(String.format(GetStringFromResources(R.string.urlState_textView), GetStringFromResources(R.string.urlState_emptyString)));
             _clearButton.setEnabled(false);
@@ -124,8 +135,105 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void UpdateUrlParameters(URLState _urlState, String _validatedUrl, TextView _urlParametersTextView) {
+        switch (_urlState) {
+            case VALID:
+                StringBuilder sb = new StringBuilder();
 
-    private enum URLState{
+                ParseQueryParameters(sb, _validatedUrl);
+
+                _urlParametersTextView.setText(Html.fromHtml(sb.toString()));
+                break;
+
+            default:
+                // Invalid URL, don't bother parsing it.
+                _urlParametersTextView.setText(GetStringFromResources(R.string.urlParametersTextViewPlaceholder));
+                break;
+        }
+    }
+
+    /**
+     * Recursive parser.
+     *
+     * @param _sb StringBuilder object which will contain the output.
+     * @param _url Url string to parse.
+     */
+    private void ParseQueryParameters(StringBuilder _sb, String _url) {
+        // Parse URL
+        Uri uri = Uri.parse(_url);
+
+        // This will prevent trying to get parameters from invalid URI (such as mailtos).
+        if(!uri.isHierarchical())
+            return;
+
+        Set<String> queryParameterNames = uri.getQueryParameterNames();
+
+        _sb.append("<ul>");
+
+        // Host, aka URL without path.
+        String host = uri.isAbsolute() ? uri.getScheme() + "://" : "";
+        host += uri.getHost();
+
+        if(!host.equals("null")) {
+            _sb.append("<li><strong>Host:</strong> ");
+            AppendAnchor(_sb, host, host);
+            _sb.append("</li>");
+
+            // Host + path
+            _sb.append("<li><strong>Host and path:</strong> ");
+            AppendAnchor(_sb, host + uri.getPath(), host + uri.getPath());
+            _sb.append("</li>");
+        }
+
+        // No query (sub)parameter? No need to parse this item
+        if(queryParameterNames.size() == 0)
+            return;
+
+        _sb.append("<li><strong>Parameters:</strong><ul>");
+
+        for (String queryParameterName : queryParameterNames) {
+            _sb.append("<li>");
+            _sb.append(queryParameterName);
+            _sb.append(": ");
+
+            // If the value is a valid URL, display it in <a> tag.
+            String value = uri.getQueryParameter(queryParameterName);
+
+            boolean isURL = false;
+
+            if (Patterns.WEB_URL.matcher(value).matches()) {
+                // We don't care if the URI scheme is missing here.
+                isURL = true;
+            }
+
+            if(isURL) {
+                AppendAnchor(_sb, value, value);
+            }
+            else {
+                _sb.append(value);
+            }
+
+            // Try to parse sub items if any.
+            ParseQueryParameters(_sb, value);
+
+            _sb.append("</li>");
+        }
+
+        _sb.append("</ul>");
+        _sb.append("</li>");
+        _sb.append("</ul>");
+    }
+
+    private void AppendAnchor(StringBuilder _sb, String _href, String _label) {
+        _sb.append("<a href=\"");
+        _sb.append(_href);
+        _sb.append("\">");
+        _sb.append(_label);
+        _sb.append("</a>");
+    }
+
+
+    private enum URLState {
         INVALID,
         VALID,
         EMPTY,

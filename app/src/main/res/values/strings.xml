@@ -12,4 +12,5 @@
     <string name="urlState_invalid">URL is invalid</string>
     <string name="urlState_uriSchemeMissing">the URI scheme is missing. Please use http:// or https:// at the start of the URL</string>
     <string name="urlState_emptyString">the URL is empty</string>
+    <string name="urlParametersTextViewPlaceholder">Parameters of valid URL appear here.</string>
 </resources>

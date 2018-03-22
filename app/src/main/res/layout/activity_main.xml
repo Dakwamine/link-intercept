@@ -10,46 +10,66 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="info.quangminhdang.linkintercept.MainActivity">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttons_linearLayout">
+        android:layout_height="match_parent">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/openLink_button"
-            android:id="@+id/open_button"
-            android:enabled="false" />
+            android:orientation="vertical" >
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/clearLink_button"
-            android:id="@+id/clear_button"
-            android:enabled="false" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/buttons_linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mainLabelForValidUrl"
-        android:id="@+id/urlLength_textView"/>
+                <Button
+                    android:id="@+id/open_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/openLink_button" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/urlState_textView"
-        android:id="@+id/urlState_textView" />
+                <Button
+                    android:id="@+id/clear_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/clearLink_button" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/interceptedLink_editText"
-        android:hint="@string/hint"
-        android:inputType="textMultiLine|textUri" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/urlState_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/urlState_textView" />
+
+            <TextView
+                android:id="@+id/urlLength_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/mainLabelForValidUrl" />
+
+            <EditText
+                android:id="@+id/interceptedLink_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint"
+                android:inputType="textMultiLine|textUri"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/urlParameters_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/urlParametersTextViewPlaceholder" />
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>
